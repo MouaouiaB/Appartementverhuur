@@ -17,7 +17,7 @@ app.all('*', (req, res, next) => {
 })
 
 // Hier installeren we de routes
-app.use('/api/movies', appartementRoutes)
+app.use('/api/appartements', appartementRoutes)
 
 // Handle endpoint not found.
 app.all('*', (req, res, next) => {
