@@ -4,7 +4,7 @@ const AppartementController = require('../controllers/appartement.controller')
 const AuthController = require('../controllers/authentication.controller')
 
 //Lijsten van Appartementen (endpoints)
-router.get('/', AuthController.validateToken, AppartementController.getAllAppartements)
-router.post('/', AppartementController.addAppartement)
+router.get('/appartements', AuthController.validateToken, AppartementController.getAllAppartements)
+router.post('/appartements', AuthController.validateToken, AppartementController.addAppartement)
 
 module.exports = router
