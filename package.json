@@ -12,13 +12,14 @@
     "type": "git",
     "url": "git+https://github.com/MouaouiaB/Appartementverhuur.git"
   },
-  "author": "Mouaouia & Maarten",
+  "author": "Mouaouia",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/MouaouiaB/Appartementverhuur/issues"
   },
   "homepage": "https://github.com/MouaouiaB/Appartementverhuur#readme",
   "dependencies": {
+    "bcrypt": "^3.0.6",
     "express": "^4.16.4",
     "jsonwebtoken": "^8.5.1",
     "mssql": "^5.1.0",

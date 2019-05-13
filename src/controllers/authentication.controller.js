@@ -2,20 +2,33 @@ const logger = require('../config/app.config').logger
 const jwt = require('jsonwebtoken')
 const assert = require('assert')
 const database = require('../datalayer/mssql.dao')
+const bcrypt = require("bcrypt");
+
+const saltRounds = 10;
+
+const phoneValidator = new RegExp('^06(| |-)[0-9]{8}$')
+const postalCodeValidator = new RegExp('^([1-9][0-9]{3})([ ]{0,1})(?!SD|sd|SS|ss|SA|sa)([a-zA-Z]{2})$')
+const dateValidator = new RegExp('([12]\\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01]))')
+const emailValidator = new RegExp('^(([^<>()[\\]\\\\.,;:\\s@\\"]+(\\.[^<>()[\\]\\\\.,;:\\s@\\"]+)*)|(\\".+\\"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$')
 
 module.exports = {
 
-    // Registreren methode
     registerUser: (req, res, next) => {
         logger.info('registerUser aangeroepen')
 
-        //user informatie uit req.body halen
+        // user informatie uit req.body halen
         const user = req.body
-
-        //Verifieer dat de juiste velden aanwezig zijn.
+        // Verifieer dat de juiste velden aanwezig zijn (Regex)
         try {
             assert.equal(typeof user.firstName, 'string', 'firstName is required.')
-            //todo: nog afmaken
+            assert.equal(typeof user.lastName, 'string', 'lastName is required.')
+            assert.equal(typeof user.streetAddress, 'string', 'streetAddress is required.')
+            assert(phoneValidator.test(user.phoneNumber), 'phoneNumber is required.')
+            assert(postalCodeValidator.test(user.postCode), 'postcode is required.')
+            assert.equal(typeof  user.city , 'string', 'city is required.')
+            assert(dateValidator.test(user.dateOfBirth), 'dateOfBirth is required.')
+            assert(emailValidator.test(user.emailAddress), 'emailAddress is required.')
+            assert.equal(typeof  user.password, 'string', 'password is required.')
         } catch (ex) {
             const errorObject = {
                 message: 'Validation fails: ' + ex.toString(),
@@ -23,8 +36,10 @@ module.exports = {
             }
             return next(errorObject)
         }
+        // password hashen
+        //const hash = bcrypt.hashSync(req.password, saltRounds);
 
-        //INSERT query vaststellen
+        // INSERT query samenstellen
         const query =
             `INSERT INTO [DBUser] (FirstName, LastName, StreetAddress, PostalCode, City, DateOfBirth, PhoneNumber, EmailAddress, Password)` +
             `VALUES ('${user.firstName}', '${user.lastName}', '${user.streetAddress}', ` +
@@ -33,41 +48,31 @@ module.exports = {
             `; SELECT SCOPE_IDENTITY() AS UserId`
 
         // Query uitvoeren en resultaat retourneren.
+
         database.executeQuery(query, (err, rows) => {
-            //verwerk error of result
+            // verwerk error of result
             if (err) {
                 const errorObject = {
-                    message: 'Er is iets mis in de database.',
+                    message: 'Er ging iets mis in de database.',
                     code: 500
                 }
                 next(errorObject)
             }
             if (rows) {
-                res.status(200).json({result: rows.recordset})
+                res.status(200).json({ result: rows.recordset })
             }
         })
     },
 
-    // Inloggen methode
-    loginUser: (req, res, next) =>{
+    loginUser: (req, res, next) => {
         logger.info('loginUser aangeroepen')
 
-        //user informatie uit req.body halen
+        // user informatie uit req.body halen
         const user = req.body
+        // Verifieer dat de juiste velden aanwezig zijn. ToDo.
 
-        //Verifieer dat de juiste velden aanwezig zijn.
-        try {
-            //todo: nog te maken
-        } catch (ex) {
-            const errorObject = {
-                message: 'Validation fails: ' + ex.toString(),
-                code: 500
-            }
-            return next(errorObject)
-        }
         // SELECT query samenstellen
         const query = `SELECT Password, UserId FROM [DBUser] WHERE EmailAddress='${user.emailAddress}'`
-
         // Query uitvoeren en resultaat retourneren.
         database.executeQuery(query, (err, rows) => {
             // verwerk error of result
@@ -95,6 +100,10 @@ module.exports = {
                     const payload = {
                         UserId: rows.recordset[0].UserId
                     }
+                    // if (
+                    //     rows.length === 1 &&
+                    //     bcrypt.compareSync(req.password, rows[0].Password)
+                    // )
                     jwt.sign({ data: payload }, 'secretkey', { expiresIn: 60 * 60 }, (err, token) => {
                         if (err) {
                             const errorObject = {
@@ -116,7 +125,6 @@ module.exports = {
         })
     },
 
-    // Token validatie
     validateToken: (req, res, next) => {
         logger.info('validateToken aangeroepen')
         // logger.debug(req.headers)
@@ -158,4 +166,24 @@ module.exports = {
         })
     },
 
+    getAll: (req, res, next) => {
+        logger.info('getAll aangeroepen')
+
+        // query samenstellen met user data
+        const query = `SELECT * FROM [DBUser]`
+
+        // Query aanroepen op de database
+        database.executeQuery(query, (err, rows) => {
+            if (err) {
+                const errorObject = {
+                    message: 'Er ging iets mis in de database.',
+                    code: 500
+                }
+                next(errorObject)
+            }
+            if (rows) {
+                res.status(200).json({ result: rows.recordset })
+            }
+        })
+    }
 }

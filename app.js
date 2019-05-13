@@ -18,7 +18,7 @@ app.all('*', (req, res, next) => {
 })
 
 // Hier installeren we de routes
-app.use('/api/appartements', appartementRoutes)
+app.use('/api', appartementRoutes)
 app.use('/api', authenticationRoutes)
 
 // Handle endpoint not found.
