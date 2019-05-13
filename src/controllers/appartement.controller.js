@@ -43,7 +43,7 @@ module.exports = {
                 next(errorObject)
             }
             if (rows) {
-                res.status(200).json({ result: rows })
+                res.status(200).json({ result: rows.recordset})
             }
         })
     },
@@ -51,7 +51,8 @@ module.exports = {
     getAllAppartements: (req, res, next) => {
         logger.info('Get /api/appartements aangeroepen')
 
-        const query = 'SELECT * FROM Apartment '
+        const query = 'SELECT * FROM Apartment ' +
+            'INNER JOIN DBUser ON (Apartment.UserId = DBUser.UserId) '
         database.executeQuery(query, (err, rows) => {
             //verwerk error of result
             if (err){
@@ -62,7 +63,7 @@ module.exports = {
                 next(errorObject)
             }
             if (rows){
-                res.status(200).json({result: rows})
+                res.status(200).json({result: rows.recordset})
             }
         })
     }

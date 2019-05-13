@@ -1,5 +1,6 @@
 const express = require('express')
 const appartementRoutes = require ('./src/routes/appartement.routes')
+const authenticationRoutes = require('./src/routes/authentication.routes')
 const logger = require('./src/config/app.config').logger
 
 const app = express()
@@ -18,6 +19,7 @@ app.all('*', (req, res, next) => {
 
 // Hier installeren we de routes
 app.use('/api/appartements', appartementRoutes)
+app.use('/api', authenticationRoutes)
 
 // Handle endpoint not found.
 app.all('*', (req, res, next) => {
