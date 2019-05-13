@@ -15,7 +15,9 @@ module.exports = {
         logger.info(apartment)
         try {
             // Valideer hier de properties van de movie die we gaan maken.
-            assert.equal(typeof apartment.description, 'string', 'apartment description is required.')
+            assert.equal(typeof apartment.description, 'string', 'apartement description is required.')
+            // assert.equal(typeof apartment.city, 'string', 'apartement city is required.')
+            // assert.equal(typeof apartment.streetAddress, 'string', 'apartement street address is required.')
         } catch (e) {
             const errorObject = {
                 message: e.toString(),
@@ -25,17 +27,11 @@ module.exports = {
         }
 
         const query =
-            "INSERT INTO Apartment(Description, StreetAddress, PostalCode, City) VALUES ('" +
-            apartment.description +
-            "','" +
-            apartment.streetAddress +
-            "','" +
-            apartment.postalCode +
-            "','" +
-            apartment.city +
-            "','" ;
-            // req.userId +
-            // "'); SELECT * FROM Movie INNER JOIN DBUser ON Movie.UserId = DBUser.UserId WHERE MovieId = SCOPE_IDENTITY();"
+            "INSERT INTO Apartment(Description, StreetAddress, PostalCode, City, UserId) " +
+            "VALUES ('" + apartment.description + "','" + apartment.streetAddress + "','" +
+            apartment.postalCode + "','" + apartment.city + "','" +
+            req.apartmentId +
+             "'); SELECT * FROM Apartment INNER JOIN DBUser ON Apartment.UserId = DBUser.UserId WHERE ApartmentId = SCOPE_IDENTITY();"
 
         database.executeQuery(query, (err, rows) => {
             // verwerk error of result
