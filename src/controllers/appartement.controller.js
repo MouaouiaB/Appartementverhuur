@@ -72,5 +72,59 @@ module.exports = {
                 res.status(200).json({result: rows.recordset})
             }
         })
-    }
+    },
+
+    getAppartementById: function(req, res, next) {
+        logger.info('Get /api/appartements/:id aangeroepen')
+        const id = req.params.apartmentId;
+
+        const query = `SELECT * FROM Apartment WHERE ApartmentId=${id};`
+        database.executeQuery(query, (err, rows) => {
+            // verwerk error of result
+            if (err) {
+                const errorObject = {
+                    message: 'Er ging iets mis in de database.',
+                    code: 500
+                }
+                next(errorObject)
+            }
+            if (rows) {
+                res.status(200).json({ result: rows.recordset })
+            }
+        })
+    },
+
+    deleteAppartementById: function(req, res, next) {
+        logger.info('deleteAppartementById aangeroepen')
+        const id = req.params.apartmentId
+        const userId = req.userId
+
+        const query = `DELETE FROM Apartment WHERE ApartmentId=${id} AND UserId=${userId}`
+        database.executeQuery(query, (err, rows) => {
+            // verwerk error of result
+            if (err) {
+                logger.trace('Could not delete apartment: ', err)
+                const errorObject = {
+                    message: 'Er ging iets mis in de database.',
+                    code: 500
+                }
+                next(errorObject)
+            }
+            if (rows) {
+                if (rows.rowsAffected[0] === 0) {
+                    // query ging goed, maar geen film met de gegeven MovieId EN userId.
+                    // -> retourneer een error!
+                    const msg = 'Apartment not found or you have no access to this apartment!'
+                    logger.trace(msg)
+                    const errorObject = {
+                        message: msg,
+                        code: 401
+                    }
+                    next(errorObject)
+                } else {
+                    res.status(200).json({ result: rows })
+                }
+            }
+        })
+    },
 }

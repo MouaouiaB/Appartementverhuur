@@ -2,9 +2,9 @@ const logger = require('../config/app.config').logger
 const jwt = require('jsonwebtoken')
 const assert = require('assert')
 const database = require('../datalayer/mssql.dao')
-const bcrypt = require("bcrypt");
 
-const saltRounds = 10;
+//const bcrypt = require("bcrypt");
+//const saltRounds = 10;
 
 const phoneValidator = new RegExp('^06(| |-)[0-9]{8}$')
 const postalCodeValidator = new RegExp('^([1-9][0-9]{3})([ ]{0,1})(?!SD|sd|SS|ss|SA|sa)([a-zA-Z]{2})$')
@@ -18,6 +18,7 @@ module.exports = {
 
         // user informatie uit req.body halen
         const user = req.body
+
         // Verifieer dat de juiste velden aanwezig zijn (Regex)
         try {
             assert.equal(typeof user.firstName, 'string', 'firstName is required.')
@@ -69,7 +70,9 @@ module.exports = {
 
         // user informatie uit req.body halen
         const user = req.body
+
         // Verifieer dat de juiste velden aanwezig zijn. ToDo.
+        assert.equal(typeof  user.password, 'string', 'password is required.')
 
         // SELECT query samenstellen
         const query = `SELECT Password, UserId FROM [DBUser] WHERE EmailAddress='${user.emailAddress}'`
