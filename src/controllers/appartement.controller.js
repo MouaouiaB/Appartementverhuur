@@ -73,9 +73,9 @@ module.exports = {
             }
         })
     },
-
+//todo: reservation nog derbij toevoegen
     getAppartementById: function(req, res, next) {
-        logger.info('Get /api/appartements/:id aangeroepen')
+        logger.info('Get /api/appartements/:apartmentId aangeroepen')
         const id = req.params.apartmentId;
 
         const query = `SELECT * FROM Apartment WHERE ApartmentId=${id};`
@@ -94,8 +94,12 @@ module.exports = {
         })
     },
 
+    updateAppartementById: function(req,res,next) {
+
+    },
+
     deleteAppartementById: function(req, res, next) {
-        logger.info('deleteAppartementById aangeroepen')
+        logger.info('Delete /api/appartements/:apartmentId aangeroepen')
         const id = req.params.apartmentId
         const userId = req.userId
 
@@ -122,7 +126,7 @@ module.exports = {
                     }
                     next(errorObject)
                 } else {
-                    res.status(200).json({ result: rows })
+                    res.status(200).json({ result: rows.recordset })
                 }
             }
         })
