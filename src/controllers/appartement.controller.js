@@ -54,11 +54,13 @@ module.exports = {
         })
     },
 
+//todo: reservation nog derbij toevoegen
     getAllAppartements: (req, res, next) => {
         logger.info('Get /api/appartements aangeroepen')
 
         const query = 'SELECT * FROM Apartment ' +
-            'INNER JOIN DBUser ON (Apartment.UserId = DBUser.UserId) '
+            'INNER JOIN DBUser ON (Apartment.UserId = DBUser.UserId) ' +
+            'INNER JOIN Reservation ON (Apartment.ApartmentId = Reservation.ApartmentId)'
         database.executeQuery(query, (err, rows) => {
             //verwerk error of result
             if (err){
@@ -73,12 +75,16 @@ module.exports = {
             }
         })
     },
+
 //todo: reservation nog derbij toevoegen
     getAppartementById: function(req, res, next) {
         logger.info('Get /api/appartements/:apartmentId aangeroepen')
         const id = req.params.apartmentId;
 
-        const query = `SELECT * FROM Apartment WHERE ApartmentId=${id};`
+        const query =
+            `SELECT * FROM Apartment WHERE ApartmentId= ${id}` +
+                'INNER JOIN DBUser ON (Apartment.UserId = DBUser.UserId) ' +
+                'INNER JOIN Reservation ON (Apartment.ApartmentId = Reservation.ApartmentId)'
         database.executeQuery(query, (err, rows) => {
             // verwerk error of result
             if (err) {
@@ -95,7 +101,42 @@ module.exports = {
     },
 
     updateAppartementById: function(req,res,next) {
+        logger.info('Put /api/appartements/:apartmentId aangeroepen')
+        const id = req.params.apartmentId;
+        const apartment = req.body
+        logger.info(apartment)
+        try {
+            // Valideer hier de properties van de movie die we gaan maken.
+            assert.equal(typeof apartment.description, 'string', 'apartement description is required.')
+            assert.equal(typeof apartment.city, 'string', 'apartement city is required.')
+            assert.equal(typeof apartment.streetAddress, 'string', 'apartement streetAddress is required.')
+            assert(postalCodeValidator.test(apartment.postalCode), 'apartement postalCode is required.')
+        } catch (e) {
+            const errorObject = {
+                message: e.toString(),
+                code: 400
+            }
+            return next(errorObject)
+        }
 
+        const query =
+            `UPDATE Apartment ` +
+            `SET Description = '${apartment.description}', StreetAddress = '${apartment.streetAddress}', PostalCode = '${apartment.postalCode}', City = '${apartment.city}' ` +
+            `WHERE ApartmentId = ${id}` +
+                `; SELECT * FROM Apartment WHERE ApartmentId = ${id} AND UserId = ${req.userId}`;
+        database.executeQuery(query, (err, rows) => {
+            // verwerk error of result
+            if (err) {
+                const errorObject = {
+                    message: 'Er ging iets mis in de database.',
+                    code: 500
+                }
+                next(errorObject)
+            }
+            if (rows) {
+                res.status(200).json({ result: rows.recordset })
+            }
+        })
     },
 
     deleteAppartementById: function(req, res, next) {
@@ -126,7 +167,7 @@ module.exports = {
                     }
                     next(errorObject)
                 } else {
-                    res.status(200).json({ result: rows.recordset })
+                    res.status(200).json({ result: 'The apartment is deleted!' })
                 }
             }
         })
