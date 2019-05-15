@@ -2,7 +2,7 @@ const logger = require('../config/app.config').logger
 const database = require('../datalayer/mssql.dao')
 const assert = require('assert')
 
-const status = 'INITIAL'
+const dateValidator = new RegExp('([12]\\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\d|3[01]))')
 module.exports = {
 
     addReservation: (req, res, next) => {
@@ -12,8 +12,8 @@ module.exports = {
         const reservation = req.body;
 
         try {
-            assert.equal(typeof reservation.startDate, 'string', 'startDate is required');
-            assert.equal(typeof reservation.endDate, 'string', 'endDate is required');
+            assert(dateValidator.test(reservation.startDate), 'startDate is required.')
+            assert(dateValidator.test(reservation.endDate), 'endDate is required.')
             assert.equal(typeof reservation.status, 'string', 'status is required');
         } catch (e) {
             const errorObject = {
@@ -27,16 +27,16 @@ module.exports = {
 
         const query =
             "INSERT INTO Reservation(ApartmentId, StartDate, EndDate, Status, UserId) VALUES ('" +
-            req.params.id +
+            id +
             "','" +
             reservation.startDate +
             "','" +
             reservation.endDate +
             "','" +
-            reservation.status +
+            'INITIAL' +
             "','" +
             req.userId +
-            "')";
+            "');"
 
         logger.info(req.body);
 
@@ -49,7 +49,7 @@ module.exports = {
                 next(errorObject)
             }
             if (rows) {
-                res.status(200).json({result: rows.recordset})
+                res.status(200).json({result: 'Succeeded'})
             }
         })
     },
