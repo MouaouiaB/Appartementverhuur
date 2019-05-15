@@ -54,13 +54,12 @@ module.exports = {
         })
     },
 
-//todo: reservation nog derbij toevoegen
     getAllAppartements: (req, res, next) => {
         logger.info('Get /api/appartements aangeroepen')
 
         const query = 'SELECT * FROM Apartment ' +
-            'INNER JOIN DBUser ON (Apartment.UserId = DBUser.UserId) ' +
-            'INNER JOIN Reservation ON (Apartment.ApartmentId = Reservation.ApartmentId)'
+            'FULL OUTER JOIN DBUser ON (Apartment.UserId = DBUser.UserId) ' +
+            'FULL OUTER JOIN Reservation ON (Apartment.ApartmentId = Reservation.ApartmentId)'
         database.executeQuery(query, (err, rows) => {
             //verwerk error of result
             if (err){
@@ -76,15 +75,14 @@ module.exports = {
         })
     },
 
-//todo: reservation nog derbij toevoegen
     getAppartementById: function(req, res, next) {
         logger.info('Get /api/appartements/:apartmentId aangeroepen')
         const id = req.params.apartmentId;
 
-        const query =
-            `SELECT * FROM Apartment WHERE ApartmentId= ${id}` +
-                'INNER JOIN DBUser ON (Apartment.UserId = DBUser.UserId) ' +
-                'INNER JOIN Reservation ON (Apartment.ApartmentId = Reservation.ApartmentId)'
+        const query = 'SELECT * FROM Apartment ' +
+                'FULL OUTER JOIN DBUser ON (Apartment.UserId = DBUser.UserId) ' +
+                'FULL OUTER JOIN Reservation ON (Apartment.ApartmentId = Reservation.ApartmentId) '+
+                `WHERE Apartment.ApartmentId = ${id}`;
         database.executeQuery(query, (err, rows) => {
             // verwerk error of result
             if (err) {
@@ -122,8 +120,8 @@ module.exports = {
         const query =
             `UPDATE Apartment ` +
             `SET Description = '${apartment.description}', StreetAddress = '${apartment.streetAddress}', PostalCode = '${apartment.postalCode}', City = '${apartment.city}' ` +
-            `WHERE ApartmentId = ${id}` +
-                `; SELECT * FROM Apartment WHERE ApartmentId = ${id} AND UserId = ${req.userId}`;
+            `WHERE ApartmentId = ${id} AND UserId = ${req.userId}` +
+                `; SELECT * FROM Apartment WHERE ApartmentId = ${id} `;
         database.executeQuery(query, (err, rows) => {
             // verwerk error of result
             if (err) {
