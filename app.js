@@ -5,7 +5,7 @@ const reservationRoutes = require('./src/routes/reservation.routes')
 const logger = require('./src/config/app.config').logger
 
 const app = express()
-const port = 3000
+const port = proces.env.PORT || 3000;
 
 app.use(express.json())
 
