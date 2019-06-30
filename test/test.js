@@ -111,6 +111,7 @@ describe('Appartement POST ', () => {
             })
             .end(function(err, res) {
                 res.should.have.status(401);
+                res.body.should.be.a('object');
                 done();
             })
     });
@@ -128,6 +129,7 @@ describe('Appartement PUT', () => {
                 "city": "Breda"
             })
             .end(function (err, res, body) {
+                res.body.should.be.a('object');
                 res.body.should.be.a('object');
                 done();
             })
@@ -325,6 +327,7 @@ describe('Reservation POST ', () => {
             })
             .end(function(err, res, body) {
                 res.should.have.status(500);
+                res.body.should.be.a('object');
                 done();
             })
     });
@@ -340,6 +343,7 @@ describe('Reservation POST ', () => {
                 })
                 .end(function (err, res, body) {
                     res.should.have.status(404);
+                    res.body.should.be.a('object');
                     done()
                 })
         });
@@ -353,6 +357,7 @@ describe('Reservation POST ', () => {
                 })
                 .end(function (err, res, body) {
                     res.should.have.status(404);
+                    res.body.should.be.a('object');
                     done()
                 })
         });
@@ -366,6 +371,7 @@ describe('Reservation POST ', () => {
                 })
                 .end(function (err, res, body) {
                     res.should.have.status(404);
+                    res.body.should.be.a('object');
                     done()
                 })
         });
@@ -379,6 +385,7 @@ describe('Reservation POST ', () => {
                 })
                 .end(function (err, res, body) {
                     res.should.have.status(404);
+                    res.body.should.be.a('object');
                     done()
                 })
         });
