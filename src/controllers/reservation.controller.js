@@ -108,7 +108,7 @@ module.exports = {
 
         const query =
             `UPDATE Reservation ` +
-            `SET StartDate = '${reservation.startDate}', EndDate = '${reservation.endDate}', Status = '${reservation.status}' ` +
+            `SET Status = '${reservation.status}' ` +
             `WHERE ApartmentId = ${id} AND ReservationId = ${reservationId} AND UserId = ${req.userId}` +
             `; SELECT * FROM Reservation WHERE ReservationId = ${reservationId} `;
         database.executeQuery(query, (err, rows) => {

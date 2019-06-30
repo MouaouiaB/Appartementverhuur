@@ -13,7 +13,7 @@ module.exports = {
         // Check dat we de UserId in het request hebben - vanuit de validateToken functie.
         logger.trace('Appartement id:', req.apartmentId)
 
-        // hier komt in het request een movie binnen.
+        // hier komt in het request een binnen.
         const apartment = req.body
         logger.info(apartment)
         try {
@@ -121,7 +121,7 @@ module.exports = {
             `UPDATE Apartment ` +
             `SET Description = '${apartment.description}', StreetAddress = '${apartment.streetAddress}', PostalCode = '${apartment.postalCode}', City = '${apartment.city}' ` +
             `WHERE ApartmentId = ${id} AND UserId = ${req.userId}` +
-                `; SELECT * FROM Apartment WHERE ApartmentId = ${id} `;
+            `; SELECT * FROM Apartment WHERE ApartmentId = ${id} `;
         database.executeQuery(query, (err, rows) => {
             // verwerk error of result
             if (err) {
