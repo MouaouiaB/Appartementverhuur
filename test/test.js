@@ -33,7 +33,10 @@ beforeEach(() => {
 
 //tests voor appartements
 describe('Appartement GET', () => {
+    this.timeout(15000);
     it('Get all appartements', done => {
+        this.timeout(15000);
+        setTimeout(done, 15000);
         chai.request(server)
             .get('/api/appartements')
             .end(function(err, res) {
