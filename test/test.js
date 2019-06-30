@@ -33,15 +33,15 @@ beforeEach(() => {
 
 //tests voor appartements
 describe('Appartement GET', () => {
-    // it('Get all appartements', done => {
-    //     chai.request(server)
-    //         .get('/api/appartements')
-    //         .end(function(err, res) {
-    //             res.should.have.status(200);
-    //             res.body.should.be.a('object');
-    //             done();
-    //         })
-    // });
+    it('Get all appartements', done => {
+        chai.request(server)
+            .get('/api/appartements')
+            .end(function(err, res) {
+                res.should.have.status(200);
+                res.body.should.be.a('object');
+                done();
+            })
+    });
 
     it('Get appartement by a valid id', done => {
         chai.request(server)
@@ -65,22 +65,22 @@ describe('Appartement GET', () => {
 })
 
 describe('Appartement POST ', () => {
-    // it('add appartement and post it', done => {
-    //     chai.request(server)
-    //         .post(endpointAp)
-    //         .set(authorization, 'Bearer ' + token)
-    //         .send({
-    //             "description": "MB bedrijf",
-    //             "streetAddress": "teststreet 1",
-    //             "postalCode": "1111 GH",
-    //             "city": "Breda"
-    //         })
-    //         .end(function(err, res) {
-    //             res.should.have.status(200);
-    //             res.body.should.be.a('object');
-    //             done();
-    //         })
-    // });
+    it('add appartement and post it', done => {
+        chai.request(server)
+            .post(endpointAp)
+            .set(authorization, 'Bearer ' + token)
+            .send({
+                "description": "MB bedrijf",
+                "streetAddress": "teststreet 1",
+                "postalCode": "1111 GH",
+                "city": "Breda"
+            })
+            .end(function(err, res) {
+                res.should.have.status(200);
+                res.body.should.be.a('object');
+                done();
+            })
+    });
 
     it('add appartement with invalid appartement', done => {
         chai.request(server)
