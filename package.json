@@ -21,7 +21,7 @@
   "dependencies": {
     "bcrypt": "^3.0.6",
     "chai-http": "^4.3.0",
-    "express": "^4.16.4",
+    "express": "^4.17.3",
     "jsonwebtoken": "^8.5.1",
     "mocha": "^6.1.4",
     "mssql": "^5.1.0",
